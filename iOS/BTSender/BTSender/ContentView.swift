@@ -9,7 +9,7 @@ import SwiftUI
 import CoreBluetooth
 
 class ContentViewModel: ObservableObject {
-    let transferManager = BluetoothTransferManager()
+    let transferManager = BLETinyFlowManager()
     @Published var transferStatus = "Ready to transfer"
     @Published var progress: Float = 0.0
     @Published var discoveredDevices: [DiscoveredDevice] = []
@@ -91,7 +91,7 @@ class ContentViewModel: ObservableObject {
     }
 }
 
-extension ContentViewModel: BluetoothTransferDelegate {
+extension ContentViewModel: BLETinyFlowManagerDelegate {
     func transferDidStart() {
         NSLog("[BTTransfer] UI: Transfer started")
         DispatchQueue.main.async {

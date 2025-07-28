@@ -15,7 +15,7 @@ import AppKit
 
 // MARK: - Protocol Constants
 
-struct BTProtocol {
+struct BLETinyFlowProtocol {
     static let serviceUUID = CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E")
     static let controlCharacteristicUUID = CBUUID(string: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E")
     static let dataChannelUUID = CBUUID(string: "6E400010-B5A3-F393-E0A9-E50E24DCCA9E")
@@ -49,14 +49,14 @@ struct ControlMessage {
     let param3: UInt32
     
     func toData() -> Data {
-        var data = Data(capacity: BTProtocol.controlMessageSize)
+        var data = Data(capacity: BLETinyFlowProtocol.controlMessageSize)
         data.append(command.rawValue)
         data.append(contentsOf: withUnsafeBytes(of: sequenceNumber.littleEndian) { Array($0) })
         data.append(contentsOf: withUnsafeBytes(of: param1.littleEndian) { Array($0) })
         data.append(contentsOf: withUnsafeBytes(of: param2.littleEndian) { Array($0) })
         data.append(contentsOf: withUnsafeBytes(of: param3.littleEndian) { Array($0) })
         
-        while data.count < BTProtocol.controlMessageSize {
+        while data.count < BLETinyFlowProtocol.controlMessageSize {
             data.append(0)
         }
         
@@ -84,13 +84,13 @@ struct DataPacket {
     let data: Data
     
     func toData() -> Data {
-        var packet = Data(capacity: BTProtocol.dataHeaderSize + data.count)
+        var packet = Data(capacity: BLETinyFlowProtocol.dataHeaderSize + data.count)
         packet.append(contentsOf: withUnsafeBytes(of: chunkID.littleEndian) { Array($0) })
         packet.append(contentsOf: withUnsafeBytes(of: dataLength.littleEndian) { Array($0) })
         packet.append(data)
         
         NSLog("[BTTransfer] DataPacket created - ChunkID: %d, HeaderDataLength: %d, ActualPayloadSize: %d, TotalPacketSize: %d (ATT header adds %d bytes)", 
-              chunkID, dataLength, data.count, packet.count, BTProtocol.attHeaderSize)
+              chunkID, dataLength, data.count, packet.count, BLETinyFlowProtocol.attHeaderSize)
         
         return packet
     }
@@ -146,7 +146,7 @@ struct DiscoveredDevice {
 
 // MARK: - Bluetooth Manager Delegate
 
-protocol BluetoothTransferDelegate: AnyObject {
+protocol BLETinyFlowManagerDelegate: AnyObject {
     func transferDidStart()
     func transferDidComplete()
     func transferDidComplete(fileSize: Int, duration: TimeInterval, throughput: Double)
@@ -158,8 +158,8 @@ protocol BluetoothTransferDelegate: AnyObject {
 
 // MARK: - Bluetooth Transfer Manager
 
-class BluetoothTransferManager: NSObject, ObservableObject {
-    weak var delegate: BluetoothTransferDelegate?
+class BLETinyFlowManager: NSObject, ObservableObject {
+    weak var delegate: BLETinyFlowManagerDelegate?
     
     private var centralManager: CBCentralManager!
     private var peripheral: CBPeripheral?
@@ -168,10 +168,10 @@ class BluetoothTransferManager: NSObject, ObservableObject {
     private var controlNotificationsEnabled = false
     
     private var transferState: TransferState = .idle
-    private var currentMTU: Int = BTProtocol.defaultMTU
+    private var currentMTU: Int = BLETinyFlowProtocol.defaultMTU
     private var fileData: Data?
     private var sequenceNumber: UInt16 = 0
-    private var chunkDelayMicroseconds: UInt32 = BTProtocol.chunkTransmissionDelayMicroseconds
+    private var chunkDelayMicroseconds: UInt32 = BLETinyFlowProtocol.chunkTransmissionDelayMicroseconds
     private var fileChunks: [Data] = []
     private var totalChunks: Int = 0
     private var transferStartTime: Date?
@@ -278,8 +278,8 @@ class BluetoothTransferManager: NSObject, ObservableObject {
         NSLog("[BTTransfer] Transfer requested for \(fileData.count) bytes")
         NSLog("[BTTransfer] Current Bluetooth state: \(centralManager.state.rawValue)")
         
-        guard fileData.count <= BTProtocol.maxFileSize else {
-            NSLog("[BTTransfer] File too large: \(fileData.count) bytes (max: \(BTProtocol.maxFileSize))")
+        guard fileData.count <= BLETinyFlowProtocol.maxFileSize else {
+            NSLog("[BTTransfer] File too large: \(fileData.count) bytes (max: \(BLETinyFlowProtocol.maxFileSize))")
             delegate?.transferDidFail(error: TransferError.fileTooLarge)
             return
         }
@@ -342,7 +342,7 @@ class BluetoothTransferManager: NSObject, ObservableObject {
         transferState = .sendingInit
         
         negotiateMTU()
-        let chunkSize = currentMTU - BTProtocol.attHeaderSize - BTProtocol.dataHeaderSize
+        let chunkSize = currentMTU - BLETinyFlowProtocol.attHeaderSize - BLETinyFlowProtocol.dataHeaderSize
         let totalChunks = (fileData.count + chunkSize - 1) / chunkSize
         
         let initMessage = ControlMessage(
@@ -400,9 +400,9 @@ class BluetoothTransferManager: NSObject, ObservableObject {
         let peripheralMaxMTUWithoutResponse = peripheral.maximumWriteValueLength(for: .withoutResponse)
         
         // Use withoutResponse since that's what we're using for data transfer
-        currentMTU = min(peripheralMaxMTUWithoutResponse, BTProtocol.maxMTU)
+        currentMTU = min(peripheralMaxMTUWithoutResponse, BLETinyFlowProtocol.maxMTU)
         NSLog("[BTTransfer] MTU Negotiation - WithResponse: %d, WithoutResponse: %d, ProtocolMax: %d, Using: %d", 
-              peripheralMaxMTUWithResponse, peripheralMaxMTUWithoutResponse, BTProtocol.maxMTU, currentMTU)
+              peripheralMaxMTUWithResponse, peripheralMaxMTUWithoutResponse, BLETinyFlowProtocol.maxMTU, currentMTU)
     }
     
     private func sendRequestedChunks(startChunk: UInt32, numChunks: UInt32) {
@@ -495,7 +495,7 @@ class BluetoothTransferManager: NSObject, ObservableObject {
 
 // MARK: - CBCentralManagerDelegate
 
-extension BluetoothTransferManager: CBCentralManagerDelegate {
+extension BLETinyFlowManager: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         let stateString: String
         switch central.state {
@@ -551,7 +551,7 @@ extension BluetoothTransferManager: CBCentralManagerDelegate {
             discoveredDevices[peripheral.identifier.uuidString] = device
             NSLog("[BTTransfer] Added device to discovery list: '\(device.displayName)'")
         } else {
-            if deviceName.contains(BTProtocol.deviceName) || deviceName.contains("ESP") {
+            if deviceName.contains(BLETinyFlowProtocol.deviceName) || deviceName.contains("ESP") {
                 NSLog("[BTTransfer] Found target ESP32 device for file transfer: '\(deviceName)'")
                 self.peripheral = peripheral
                 peripheral.delegate = self
@@ -566,7 +566,7 @@ extension BluetoothTransferManager: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         NSLog("[BTTransfer] Connected to peripheral: \(peripheral.name ?? "Unknown")")
         NSLog("[BTTransfer] Discovering services")
-        peripheral.discoverServices([BTProtocol.serviceUUID])
+        peripheral.discoverServices([BLETinyFlowProtocol.serviceUUID])
         
         connectionTimer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { [weak self] _ in
             NSLog("[BTTransfer] Connection timeout")
@@ -581,9 +581,6 @@ extension BluetoothTransferManager: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         NSLog("[BTTransfer] Disconnected from peripheral: \(error?.localizedDescription ?? "No error")")
-        if let error = error {
-            delegate?.transferDidFail(error: error)
-        }
         
         self.peripheral = nil
         controlCharacteristic = nil
@@ -594,7 +591,7 @@ extension BluetoothTransferManager: CBCentralManagerDelegate {
 
 // MARK: - CBPeripheralDelegate
 
-extension BluetoothTransferManager: CBPeripheralDelegate {
+extension BLETinyFlowManager: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         NSLog("[BTTransfer] Discovered services, error: \(error?.localizedDescription ?? "none")")
         guard let services = peripheral.services else { 
@@ -605,9 +602,9 @@ extension BluetoothTransferManager: CBPeripheralDelegate {
         NSLog("[BTTransfer] Found \(services.count) services")
         for service in services {
             NSLog("[BTTransfer] Service UUID: \(service.uuid)")
-            if service.uuid == BTProtocol.serviceUUID {
+            if service.uuid == BLETinyFlowProtocol.serviceUUID {
                 NSLog("[BTTransfer] Found target service, discovering characteristics")
-                peripheral.discoverCharacteristics([BTProtocol.controlCharacteristicUUID, BTProtocol.dataChannelUUID], for: service)
+                peripheral.discoverCharacteristics([BLETinyFlowProtocol.controlCharacteristicUUID, BLETinyFlowProtocol.dataChannelUUID], for: service)
             }
         }
     }
@@ -622,7 +619,7 @@ extension BluetoothTransferManager: CBPeripheralDelegate {
         NSLog("[BTTransfer] Found \(characteristics.count) characteristics")
         for characteristic in characteristics {
             NSLog("[BTTransfer] Characteristic UUID: \(characteristic.uuid)")
-            if characteristic.uuid == BTProtocol.controlCharacteristicUUID {
+            if characteristic.uuid == BLETinyFlowProtocol.controlCharacteristicUUID {
                 NSLog("[BTTransfer] Found control characteristic")
                 NSLog("[BTTransfer] Control characteristic properties: \(characteristic.properties.rawValue)")
                 NSLog("[BTTransfer] Control characteristic supports notify: \(characteristic.properties.contains(.notify))")
@@ -636,7 +633,7 @@ extension BluetoothTransferManager: CBPeripheralDelegate {
                 } else {
                     NSLog("[BTTransfer] Control characteristic does not support notifications!")
                 }
-            } else if characteristic.uuid == BTProtocol.dataChannelUUID {
+            } else if characteristic.uuid == BLETinyFlowProtocol.dataChannelUUID {
                 NSLog("[BTTransfer] Found data characteristic")
                 dataCharacteristic = characteristic
             }
@@ -694,7 +691,7 @@ extension BluetoothTransferManager: CBPeripheralDelegate {
             NSLog("[BTTransfer] Failed to discover descriptors for characteristic \(characteristic.uuid): \(error.localizedDescription)")
             NSLog("[BTTransfer] Descriptor discovery error domain: \(error._domain)")
             NSLog("[BTTransfer] Descriptor discovery error code: \(error._code)")
-            if characteristic.uuid == BTProtocol.controlCharacteristicUUID {
+            if characteristic.uuid == BLETinyFlowProtocol.controlCharacteristicUUID {
                 NSLog("[BTTransfer] Attempting notification enable despite descriptor discovery failure...")
                 peripheral.setNotifyValue(true, for: characteristic)
             }
@@ -714,7 +711,7 @@ extension BluetoothTransferManager: CBPeripheralDelegate {
             NSLog("[BTTransfer] Descriptors array is nil for characteristic")
         }
         
-        if characteristic.uuid == BTProtocol.controlCharacteristicUUID {
+        if characteristic.uuid == BLETinyFlowProtocol.controlCharacteristicUUID {
             if let descriptors = characteristic.descriptors, 
                descriptors.contains(where: { $0.uuid == CBUUID(string: CBUUIDClientCharacteristicConfigurationString) }) {
                 NSLog("[BTTransfer] CCCD found, attempting to enable notifications...")
@@ -749,7 +746,7 @@ extension BluetoothTransferManager: CBPeripheralDelegate {
             return
         }
         
-        if characteristic.uuid == BTProtocol.controlCharacteristicUUID {
+        if characteristic.uuid == BLETinyFlowProtocol.controlCharacteristicUUID {
             controlNotificationsEnabled = characteristic.isNotifying
             NSLog("[BTTransfer] Control characteristic notifications enabled: \(controlNotificationsEnabled)")
             
@@ -770,7 +767,7 @@ extension BluetoothTransferManager: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard let data = characteristic.value else { return }
         
-        if characteristic.uuid == BTProtocol.controlCharacteristicUUID {
+        if characteristic.uuid == BLETinyFlowProtocol.controlCharacteristicUUID {
             handleControlMessage(data)
         }
     }
