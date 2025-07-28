@@ -1,0 +1,931 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		E563D66C2E3506EE003112CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E58FAAD02E34C95600D47992 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E563D65D2E3506EE003112CA;
+			remoteInfo = BTSenderMac;
+		};
+		E563D6762E3506EE003112CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E58FAAD02E34C95600D47992 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E563D65D2E3506EE003112CA;
+			remoteInfo = BTSenderMac;
+		};
+		E58FAAE62E34C95700D47992 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E58FAAD02E34C95600D47992 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E58FAAD72E34C95600D47992;
+			remoteInfo = BTSender;
+		};
+		E58FAAF02E34C95700D47992 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E58FAAD02E34C95600D47992 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E58FAAD72E34C95600D47992;
+			remoteInfo = BTSender;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E563D65E2E3506EE003112CA /* BTSenderMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BTSenderMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E563D66B2E3506EE003112CA /* BTSenderMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BTSenderMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E563D6752E3506EE003112CA /* BTSenderMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BTSenderMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E58FAAD82E34C95600D47992 /* BTSender.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BTSender.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E58FAAE52E34C95700D47992 /* BTSenderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BTSenderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E58FAAEF2E34C95700D47992 /* BTSenderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BTSenderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E563D65F2E3506EE003112CA /* BTSenderMac */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BTSenderMac;
+			sourceTree = "<group>";
+		};
+		E563D66E2E3506EE003112CA /* BTSenderMacTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BTSenderMacTests;
+			sourceTree = "<group>";
+		};
+		E563D6782E3506EE003112CA /* BTSenderMacUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BTSenderMacUITests;
+			sourceTree = "<group>";
+		};
+		E58FAADA2E34C95600D47992 /* BTSender */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BTSender;
+			sourceTree = "<group>";
+		};
+		E58FAAE82E34C95700D47992 /* BTSenderTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BTSenderTests;
+			sourceTree = "<group>";
+		};
+		E58FAAF22E34C95700D47992 /* BTSenderUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BTSenderUITests;
+			sourceTree = "<group>";
+		};
+		E5AFFBEB2E37DD7500BC61D6 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E563D65B2E3506EE003112CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E563D6682E3506EE003112CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E563D6722E3506EE003112CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAD52E34C95600D47992 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAE22E34C95700D47992 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAEC2E34C95700D47992 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E58FAACF2E34C95600D47992 = {
+			isa = PBXGroup;
+			children = (
+				E5AFFBEB2E37DD7500BC61D6 /* Shared */,
+				E58FAADA2E34C95600D47992 /* BTSender */,
+				E58FAAE82E34C95700D47992 /* BTSenderTests */,
+				E58FAAF22E34C95700D47992 /* BTSenderUITests */,
+				E563D65F2E3506EE003112CA /* BTSenderMac */,
+				E563D66E2E3506EE003112CA /* BTSenderMacTests */,
+				E563D6782E3506EE003112CA /* BTSenderMacUITests */,
+				E58FAAD92E34C95600D47992 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E58FAAD92E34C95600D47992 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E58FAAD82E34C95600D47992 /* BTSender.app */,
+				E58FAAE52E34C95700D47992 /* BTSenderTests.xctest */,
+				E58FAAEF2E34C95700D47992 /* BTSenderUITests.xctest */,
+				E563D65E2E3506EE003112CA /* BTSenderMac.app */,
+				E563D66B2E3506EE003112CA /* BTSenderMacTests.xctest */,
+				E563D6752E3506EE003112CA /* BTSenderMacUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E563D65D2E3506EE003112CA /* BTSenderMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E563D67D2E3506EE003112CA /* Build configuration list for PBXNativeTarget "BTSenderMac" */;
+			buildPhases = (
+				E563D65A2E3506EE003112CA /* Sources */,
+				E563D65B2E3506EE003112CA /* Frameworks */,
+				E563D65C2E3506EE003112CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E563D65F2E3506EE003112CA /* BTSenderMac */,
+				E5AFFBEB2E37DD7500BC61D6 /* Shared */,
+			);
+			name = BTSenderMac;
+			packageProductDependencies = (
+			);
+			productName = BTSenderMac;
+			productReference = E563D65E2E3506EE003112CA /* BTSenderMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E563D66A2E3506EE003112CA /* BTSenderMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E563D6802E3506EE003112CA /* Build configuration list for PBXNativeTarget "BTSenderMacTests" */;
+			buildPhases = (
+				E563D6672E3506EE003112CA /* Sources */,
+				E563D6682E3506EE003112CA /* Frameworks */,
+				E563D6692E3506EE003112CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E563D66D2E3506EE003112CA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E563D66E2E3506EE003112CA /* BTSenderMacTests */,
+			);
+			name = BTSenderMacTests;
+			packageProductDependencies = (
+			);
+			productName = BTSenderMacTests;
+			productReference = E563D66B2E3506EE003112CA /* BTSenderMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E563D6742E3506EE003112CA /* BTSenderMacUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E563D6832E3506EE003112CA /* Build configuration list for PBXNativeTarget "BTSenderMacUITests" */;
+			buildPhases = (
+				E563D6712E3506EE003112CA /* Sources */,
+				E563D6722E3506EE003112CA /* Frameworks */,
+				E563D6732E3506EE003112CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E563D6772E3506EE003112CA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E563D6782E3506EE003112CA /* BTSenderMacUITests */,
+			);
+			name = BTSenderMacUITests;
+			packageProductDependencies = (
+			);
+			productName = BTSenderMacUITests;
+			productReference = E563D6752E3506EE003112CA /* BTSenderMacUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		E58FAAD72E34C95600D47992 /* BTSender */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E58FAAF92E34C95700D47992 /* Build configuration list for PBXNativeTarget "BTSender" */;
+			buildPhases = (
+				E58FAAD42E34C95600D47992 /* Sources */,
+				E58FAAD52E34C95600D47992 /* Frameworks */,
+				E58FAAD62E34C95600D47992 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E58FAADA2E34C95600D47992 /* BTSender */,
+				E5AFFBEB2E37DD7500BC61D6 /* Shared */,
+			);
+			name = BTSender;
+			packageProductDependencies = (
+			);
+			productName = BTSender;
+			productReference = E58FAAD82E34C95600D47992 /* BTSender.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E58FAAE42E34C95700D47992 /* BTSenderTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E58FAAFC2E34C95700D47992 /* Build configuration list for PBXNativeTarget "BTSenderTests" */;
+			buildPhases = (
+				E58FAAE12E34C95700D47992 /* Sources */,
+				E58FAAE22E34C95700D47992 /* Frameworks */,
+				E58FAAE32E34C95700D47992 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E58FAAE72E34C95700D47992 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E58FAAE82E34C95700D47992 /* BTSenderTests */,
+			);
+			name = BTSenderTests;
+			packageProductDependencies = (
+			);
+			productName = BTSenderTests;
+			productReference = E58FAAE52E34C95700D47992 /* BTSenderTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E58FAAEE2E34C95700D47992 /* BTSenderUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E58FAAFF2E34C95700D47992 /* Build configuration list for PBXNativeTarget "BTSenderUITests" */;
+			buildPhases = (
+				E58FAAEB2E34C95700D47992 /* Sources */,
+				E58FAAEC2E34C95700D47992 /* Frameworks */,
+				E58FAAED2E34C95700D47992 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E58FAAF12E34C95700D47992 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E58FAAF22E34C95700D47992 /* BTSenderUITests */,
+			);
+			name = BTSenderUITests;
+			packageProductDependencies = (
+			);
+			productName = BTSenderUITests;
+			productReference = E58FAAEF2E34C95700D47992 /* BTSenderUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E58FAAD02E34C95600D47992 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					E563D65D2E3506EE003112CA = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					E563D66A2E3506EE003112CA = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = E563D65D2E3506EE003112CA;
+					};
+					E563D6742E3506EE003112CA = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = E563D65D2E3506EE003112CA;
+					};
+					E58FAAD72E34C95600D47992 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					E58FAAE42E34C95700D47992 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = E58FAAD72E34C95600D47992;
+					};
+					E58FAAEE2E34C95700D47992 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = E58FAAD72E34C95600D47992;
+					};
+				};
+			};
+			buildConfigurationList = E58FAAD32E34C95600D47992 /* Build configuration list for PBXProject "BTSender" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E58FAACF2E34C95600D47992;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E58FAAD92E34C95600D47992 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E58FAAD72E34C95600D47992 /* BTSender */,
+				E58FAAE42E34C95700D47992 /* BTSenderTests */,
+				E58FAAEE2E34C95700D47992 /* BTSenderUITests */,
+				E563D65D2E3506EE003112CA /* BTSenderMac */,
+				E563D66A2E3506EE003112CA /* BTSenderMacTests */,
+				E563D6742E3506EE003112CA /* BTSenderMacUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E563D65C2E3506EE003112CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E563D6692E3506EE003112CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E563D6732E3506EE003112CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAD62E34C95600D47992 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAE32E34C95700D47992 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAED2E34C95700D47992 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E563D65A2E3506EE003112CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E563D6672E3506EE003112CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E563D6712E3506EE003112CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAD42E34C95600D47992 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAE12E34C95700D47992 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58FAAEB2E34C95700D47992 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E563D66D2E3506EE003112CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E563D65D2E3506EE003112CA /* BTSenderMac */;
+			targetProxy = E563D66C2E3506EE003112CA /* PBXContainerItemProxy */;
+		};
+		E563D6772E3506EE003112CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E563D65D2E3506EE003112CA /* BTSenderMac */;
+			targetProxy = E563D6762E3506EE003112CA /* PBXContainerItemProxy */;
+		};
+		E58FAAE72E34C95700D47992 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E58FAAD72E34C95600D47992 /* BTSender */;
+			targetProxy = E58FAAE62E34C95700D47992 /* PBXContainerItemProxy */;
+		};
+		E58FAAF12E34C95700D47992 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E58FAAD72E34C95600D47992 /* BTSender */;
+			targetProxy = E58FAAF02E34C95700D47992 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E563D67E2E3506EE003112CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = BTSenderMac/BTSenderMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "$(PRODUCT_BUNDLE_PACKAGE_TYPE)";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E563D67F2E3506EE003112CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = BTSenderMac/BTSenderMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "$(PRODUCT_BUNDLE_PACKAGE_TYPE)";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		E563D6812E3506EE003112CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BTSenderMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BTSenderMac";
+			};
+			name = Debug;
+		};
+		E563D6822E3506EE003112CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BTSenderMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BTSenderMac";
+			};
+			name = Release;
+		};
+		E563D6842E3506EE003112CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = BTSenderMac;
+			};
+			name = Debug;
+		};
+		E563D6852E3506EE003112CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = BTSenderMac;
+			};
+			name = Release;
+		};
+		E58FAAF72E34C95700D47992 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		E58FAAF82E34C95700D47992 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E58FAAFA2E34C95700D47992 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = test;
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = test;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSender;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E58FAAFB2E34C95700D47992 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = test;
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = test;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSender;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E58FAAFD2E34C95700D47992 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BTSender.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BTSender";
+			};
+			name = Debug;
+		};
+		E58FAAFE2E34C95700D47992 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BTSender.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BTSender";
+			};
+			name = Release;
+		};
+		E58FAB002E34C95700D47992 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BTSender;
+			};
+			name = Debug;
+		};
+		E58FAB012E34C95700D47992 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X4965A2Y4A;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.openepaperlabs.BTSenderUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BTSender;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E563D67D2E3506EE003112CA /* Build configuration list for PBXNativeTarget "BTSenderMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E563D67E2E3506EE003112CA /* Debug */,
+				E563D67F2E3506EE003112CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E563D6802E3506EE003112CA /* Build configuration list for PBXNativeTarget "BTSenderMacTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E563D6812E3506EE003112CA /* Debug */,
+				E563D6822E3506EE003112CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E563D6832E3506EE003112CA /* Build configuration list for PBXNativeTarget "BTSenderMacUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E563D6842E3506EE003112CA /* Debug */,
+				E563D6852E3506EE003112CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E58FAAD32E34C95600D47992 /* Build configuration list for PBXProject "BTSender" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E58FAAF72E34C95700D47992 /* Debug */,
+				E58FAAF82E34C95700D47992 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E58FAAF92E34C95700D47992 /* Build configuration list for PBXNativeTarget "BTSender" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E58FAAFA2E34C95700D47992 /* Debug */,
+				E58FAAFB2E34C95700D47992 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E58FAAFC2E34C95700D47992 /* Build configuration list for PBXNativeTarget "BTSenderTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E58FAAFD2E34C95700D47992 /* Debug */,
+				E58FAAFE2E34C95700D47992 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E58FAAFF2E34C95700D47992 /* Build configuration list for PBXNativeTarget "BTSenderUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E58FAB002E34C95700D47992 /* Debug */,
+				E58FAB012E34C95700D47992 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E58FAAD02E34C95600D47992 /* Project object */;
+}

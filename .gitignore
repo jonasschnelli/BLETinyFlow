@@ -3,13 +3,6 @@
 # ================================
 
 # Xcode
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcodeproj/xcshareddata/
-!*.xcodeproj/project.xcworkspace/
-*.xcodeproj/project.xcworkspace/*
-!*.xcodeproj/project.xcworkspace/contents.xcworkspacedata
-!*.xcodeproj/project.xcworkspace/xcshareddata/
 
 *.xcworkspace/*
 !*.xcworkspace/contents.xcworkspacedata
@@ -53,7 +46,6 @@ Carthage/Checkouts/
 Packages/
 Package.pins
 Package.resolved
-*.xcodeproj
 
 # Fastlane
 fastlane/report.xml
