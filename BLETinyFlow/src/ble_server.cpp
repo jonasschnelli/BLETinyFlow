@@ -15,7 +15,7 @@ static const char* TAG = "BLEServer";
 // Static instance for singleton pattern
 BLEServer* BLEServer::instance_ = nullptr;
 
-BLEServer::BLEServer() : initialized_(false), started_(false), local_mtu_(512) {
+BLEServer::BLEServer() : initialized_(false), started_(false), local_mtu_(512), connected_count_(0) {
     instance_ = this;
 }
 
@@ -104,6 +104,22 @@ GATTService* BLEServer::get_service(uint16_t app_id) {
     return nullptr;
 }
 
+esp_err_t BLEServer::restart_advertising() {
+    if (!initialized_ || !started_) {
+        ESP_LOGW(TAG, "Cannot restart advertising: server not initialized or started");
+        return ESP_ERR_INVALID_STATE;
+    }
+    
+    ESP_LOGI(TAG, "Restarting advertising to accept new connections");
+    esp_err_t ret = advertising_manager_.start_advertising();
+    if (ret == ESP_OK) {
+        ESP_LOGI(TAG, "Advertising restarted successfully");
+    } else {
+        ESP_LOGE(TAG, "Failed to restart advertising: %s", esp_err_to_name(ret));
+    }
+    return ret;
+}
+
 // Static callback wrappers
 void BLEServer::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {
     if (instance_) {
@@ -118,6 +134,33 @@ void BLEServer::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_p
 }
 
 void BLEServer::handle_gatts_event(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {
+    // Log important connection events
+    switch (event) {
+    case ESP_GATTS_CONNECT_EVT:
+        connected_count_++;
+        ESP_LOGI(TAG, "🔗 BLE client connected (conn_id: %d, total connections: %d)", 
+                 param->connect.conn_id, connected_count_);
+        ESP_LOGI(TAG, "Client address: " ESP_BD_ADDR_STR, ESP_BD_ADDR_HEX(param->connect.remote_bda));
+        break;
+        
+    case ESP_GATTS_DISCONNECT_EVT:
+        if (connected_count_ > 0) {
+            connected_count_--;
+        }
+        ESP_LOGI(TAG, "🔌 BLE client disconnected (conn_id: %d, reason: 0x%02x, remaining connections: %d)", 
+                 param->disconnect.conn_id, param->disconnect.reason, connected_count_);
+        ESP_LOGI(TAG, "Client address: " ESP_BD_ADDR_STR, ESP_BD_ADDR_HEX(param->disconnect.remote_bda));
+        
+        // Automatically restart advertising when no clients are connected
+        if (connected_count_ == 0) {
+            ESP_LOGI(TAG, "No clients connected - will restart advertising after service cleanup");
+        }
+        break;
+        
+    default:
+        break;
+    }
+    
     // Handle registration events first
     if (event == ESP_GATTS_REG_EVT) {
         if (param->reg.status == ESP_GATT_OK) {

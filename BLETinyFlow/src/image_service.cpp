@@ -7,6 +7,7 @@
 #include <cstring>
 #include <cstdlib>
 #include "esp_heap_caps.h"
+#include "ble_server.h"
 
 // Uncomment for detailed chunk logging (impacts performance)
 // #define CHUNK_LOGGING
@@ -379,6 +380,18 @@ void ImageService::handle_disconnect_event(esp_ble_gatts_cb_param_t *param) {
     // Reset notification state
     control_notifications_enabled_ = false;
     data_notifications_enabled_ = false;
+    
+    // Restart advertising to allow new connections
+    BLEServer* server = BLEServer::get_instance();
+    if (server) {
+        ESP_LOGI(TAG, "Requesting server to restart advertising for new connections");
+        esp_err_t ret = server->restart_advertising();
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to restart advertising: %s", esp_err_to_name(ret));
+        }
+    } else {
+        ESP_LOGE(TAG, "Cannot restart advertising: BLEServer instance not available");
+    }
 }
 
 void ImageService::handle_mtu_event(esp_ble_gatts_cb_param_t *param) {
@@ -626,6 +639,10 @@ void ImageService::handle_data_chunk(const uint8_t* data, uint16_t len) {
         ESP_LOGI(TAG, "🔌 Disconnecting client after successful transfer to allow new connections");
         esp_err_t disconnect_ret = esp_ble_gatts_close(get_gatts_if(), conn_id_);
         if (disconnect_ret == ESP_OK) {
+            ESP_LOGI(TAG, "✅ Client disconnect initiated successfully");
+        } else {
+            ESP_LOGE(TAG, "❌ Failed to disconnect client: %s", esp_err_to_name(disconnect_ret));
+        }
     }
     else {
         // Fast batch completion check using counter

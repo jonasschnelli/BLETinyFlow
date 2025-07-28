@@ -67,6 +67,7 @@ public:
     
     // Advertising
     AdvertisingManager& get_advertising_manager() { return advertising_manager_; }
+    esp_err_t restart_advertising();
     
     // Event handlers (static callbacks for ESP-IDF)
     static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
@@ -83,6 +84,7 @@ private:
     bool initialized_;
     bool started_;
     uint16_t local_mtu_;
+    uint16_t connected_count_;
     
     // Internal event handling
     void handle_gatts_event(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
