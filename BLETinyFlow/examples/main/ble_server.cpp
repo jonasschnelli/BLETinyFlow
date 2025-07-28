@@ -31,6 +31,9 @@ static const uint8_t service_uuid[16] = {
     0x93, 0xf3, 0xa3, 0xb5, 0x01, 0x00, 0x40, 0x6e
 };
 
+// Global reference to image service for callback cleanup
+static ImageService* g_image_service = nullptr;
+
 // Image transfer completion callback function
 void on_image_transfer_complete(const uint8_t* image_data, uint32_t size, bool is_valid_jpeg) {
     ESP_LOGI(TAG, "=== IMAGE TRANSFER COMPLETED ===");
@@ -52,6 +55,14 @@ void on_image_transfer_complete(const uint8_t* image_data, uint32_t size, bool i
         ESP_LOGI(TAG, "Image processing completed successfully");
     } else {
         ESP_LOGW(TAG, "Invalid image data received");
+    }
+    
+    // CRITICAL: Release the image buffer to prevent memory leaks and use-after-free
+    if (g_image_service) {
+        g_image_service->release_image_buffer();
+        ESP_LOGI(TAG, "Image buffer released");
+    } else {
+        ESP_LOGE(TAG, "Cannot release image buffer - service reference not available");
     }
     
     ESP_LOGI(TAG, "=== IMAGE CALLBACK FINISHED ===");
@@ -85,6 +96,9 @@ void app_main(void) {
     
     // Add image service
     auto image_service = std::make_unique<ImageService>();
+    
+    // Store global reference for callback cleanup (before moving ownership)
+    g_image_service = image_service.get();
     
     // Register image transfer completion callback
     image_service->set_image_transfer_callback(on_image_transfer_complete);

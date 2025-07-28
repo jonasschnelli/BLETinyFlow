@@ -43,6 +43,8 @@ public:
     static constexpr uint16_t NUM_HANDLES = 15;
     
     // Image transfer completion callback
+    // IMPORTANT: User must call release_image_buffer() when done processing image_data
+    // to prevent memory leaks and use-after-free conditions
     typedef void (*ImageTransferCallback)(const uint8_t* image_data, uint32_t size, bool is_valid_jpeg);
     
     // ==================== GATT CHARACTERISTIC DEFINITIONS ====================
@@ -162,6 +164,9 @@ public:
     
     // Callback management
     void set_image_transfer_callback(ImageTransferCallback callback) { image_callback_ = callback; }
+    
+    // Buffer management - MUST be called by user after processing image in callback
+    void release_image_buffer();
     
     // Notification methods
     bool send_control_notification(const ControlMessage& msg);

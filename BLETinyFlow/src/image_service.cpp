@@ -80,11 +80,20 @@ void ImageService::handle_event(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     }
 }
 
-void ImageService::reset_transfer() {
+void ImageService::release_image_buffer() {
     if (image_buffer_) {
+        ESP_LOGI(TAG, "Releasing image buffer (%lu bytes)", total_size_);
         free(image_buffer_);
         image_buffer_ = nullptr;
+    } else {
+        ESP_LOGW(TAG, "Image buffer already released or never allocated");
     }
+}
+
+void ImageService::reset_transfer() {
+    // Release image buffer (safe to call multiple times)
+    release_image_buffer();
+    
     if (chunk_received_map_) {
         free(chunk_received_map_);
         chunk_received_map_ = nullptr;
