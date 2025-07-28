@@ -2,7 +2,9 @@
 
 **Author:** Jonas Schnelli  
 **License:** MIT  
-**Version:** 1.0
+**Version:** 0.1 Beta
+
+⚠️ **WARNING: This protocol is currently under heavy development and is unstable. Breaking changes may occur without notice.**
 
 ## Overview
 
