@@ -1,4 +1,5 @@
 - Add multi-connection option or at least block further device connections if connection is busy
+- Implement a CRC32 checksum for the whole file
 - Optimize logging (move some logs to debug level). Right now, it decreases performance
 - Add a test strategy, add unit tests against fixed data (to test error cases, etc.)
 - Maybe remove emojis in log messages (still undecided)
