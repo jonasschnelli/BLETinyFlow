@@ -621,6 +621,11 @@ void ImageService::handle_data_chunk(const uint8_t* data, uint16_t len) {
         } else {
             ESP_LOGI(TAG, "ℹ️ No image transfer callback registered");
         }
+        
+        // Disconnect client after successful transfer to allow new connections
+        ESP_LOGI(TAG, "🔌 Disconnecting client after successful transfer to allow new connections");
+        esp_err_t disconnect_ret = esp_ble_gatts_close(get_gatts_if(), conn_id_);
+        if (disconnect_ret == ESP_OK) {
     }
     else {
         // Fast batch completion check using counter
