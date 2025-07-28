@@ -117,8 +117,8 @@ void AdvertisingManager::setup_adv_data() {
         .p_manufacturer_data = nullptr,
         .service_data_len = 0,
         .p_service_data = nullptr,
-        .service_uuid_len = ESP_UUID_LEN_128,
-        .p_service_uuid = service_uuid_,
+        .service_uuid_len = 0,
+        .p_service_uuid = nullptr,
         .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
     };
 }
@@ -126,8 +126,8 @@ void AdvertisingManager::setup_adv_data() {
 void AdvertisingManager::setup_scan_rsp_data() {
     scan_rsp_data_ = {
         .set_scan_rsp = true,
-        .include_name = true,
-        .include_txpower = true,
+        .include_name = false,
+        .include_txpower = false,
         .appearance = 0x00,
         .manufacturer_len = 0,
         .p_manufacturer_data = nullptr,
