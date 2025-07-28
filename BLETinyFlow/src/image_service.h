@@ -42,6 +42,9 @@ public:
     static constexpr uint16_t APP_ID = 0;
     static constexpr uint16_t NUM_HANDLES = 15;
     
+    // Image transfer completion callback
+    typedef void (*ImageTransferCallback)(const uint8_t* image_data, uint32_t size, bool is_valid_jpeg);
+    
     // ==================== GATT CHARACTERISTIC DEFINITIONS ====================
     // Protocol-compliant characteristic UUIDs as specified in specs.md
     
@@ -157,6 +160,9 @@ public:
     void set_mtu(uint16_t mtu) { mtu_ = mtu; }
     uint16_t get_mtu() const { return mtu_; }
     
+    // Callback management
+    void set_image_transfer_callback(ImageTransferCallback callback) { image_callback_ = callback; }
+    
     // Notification methods
     bool send_control_notification(const ControlMessage& msg);
     bool send_chunk_request(uint16_t start_chunk, uint16_t num_chunks);
@@ -212,6 +218,9 @@ private:
     // Performance optimization counters
     uint32_t total_chunks_received_;  // Fast counter instead of array iteration
     uint16_t current_batch_received_; // Fast counter for current batch
+    
+    // Callback for image transfer completion
+    ImageTransferCallback image_callback_;
     
     // Event handlers
     void handle_reg_event(esp_ble_gatts_cb_param_t *param);

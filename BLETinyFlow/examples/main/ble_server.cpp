@@ -31,6 +31,32 @@ static const uint8_t service_uuid[16] = {
     0x93, 0xf3, 0xa3, 0xb5, 0x01, 0x00, 0x40, 0x6e
 };
 
+// Image transfer completion callback function
+void on_image_transfer_complete(const uint8_t* image_data, uint32_t size, bool is_valid_jpeg) {
+    ESP_LOGI(TAG, "=== IMAGE TRANSFER COMPLETED ===");
+    ESP_LOGI(TAG, "Received image: %lu bytes", size);
+    ESP_LOGI(TAG, "JPEG validation: %s", is_valid_jpeg ? "VALID" : "INVALID");
+    
+    if (image_data && size > 0) {
+        // Log first few bytes for verification
+        ESP_LOGI(TAG, "First 8 bytes: %02X %02X %02X %02X %02X %02X %02X %02X",
+                 image_data[0], image_data[1], image_data[2], image_data[3],
+                 image_data[4], image_data[5], image_data[6], image_data[7]);
+        
+        // Here you can add custom image processing logic:
+        // - Save to file system (SPIFFS/LittleFS)
+        // - Process the image data
+        // - Forward to another system component
+        // - Analyze image properties
+        
+        ESP_LOGI(TAG, "Image processing completed successfully");
+    } else {
+        ESP_LOGW(TAG, "Invalid image data received");
+    }
+    
+    ESP_LOGI(TAG, "=== IMAGE CALLBACK FINISHED ===");
+}
+
 extern "C" {
     void app_main(void);
 }
@@ -59,6 +85,11 @@ void app_main(void) {
     
     // Add image service
     auto image_service = std::make_unique<ImageService>();
+    
+    // Register image transfer completion callback
+    image_service->set_image_transfer_callback(on_image_transfer_complete);
+    ESP_LOGI(TAG, "Image transfer callback registered");
+    
     ble_server.add_service(std::move(image_service));
     
     // Initialize BLE server

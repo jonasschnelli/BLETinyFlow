@@ -37,7 +37,8 @@ ImageService::ImageService()
       image_buffer_(nullptr), received_size_(0), next_expected_chunk_(0),
       chunk_received_map_(nullptr),
       current_request_start_(0), current_request_end_(0), chunks_per_request_(DEFAULT_CHUNKS_PER_REQUEST),
-      total_chunks_received_(0), current_batch_received_(0) {
+      total_chunks_received_(0), current_batch_received_(0),
+      image_callback_(nullptr) {
 }
 
 ImageService::~ImageService() {
@@ -600,6 +601,16 @@ void ImageService::handle_data_chunk(const uint8_t* data, uint16_t len) {
             ESP_LOGI(TAG, "✅ Transfer complete ACK sent");
         } else {
             ESP_LOGE(TAG, "❌ Failed to send TRANSFER_COMPLETE_ACK");
+        }
+        
+        // Invoke callback if registered
+        if (image_callback_) {
+            bool is_valid_jpeg = validate_jpeg_header();
+            ESP_LOGI(TAG, "🔄 Invoking image transfer callback with %lu bytes", received_size_);
+            image_callback_(image_buffer_, received_size_, is_valid_jpeg);
+            ESP_LOGI(TAG, "✅ Image transfer callback completed");
+        } else {
+            ESP_LOGI(TAG, "ℹ️ No image transfer callback registered");
         }
     }
     else {
