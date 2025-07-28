@@ -1,3 +1,0 @@
-- Optimize logging (move some logs to debug level). Right now, it decreases performance
-- Add a test strategy, add unittest against fixed data (to test error cases, etc.)
-- Maybe remove emojis in log messages (still undecided)
