@@ -2,3 +2,5 @@
 - Optimize logging (move some logs to debug level). Right now, it decreases performance
 - Add a test strategy, add unit tests against fixed data (to test error cases, etc.)
 - Maybe remove emojis in log messages (still undecided)
+- Add message for transfer abort
+- Add custom info message (key/value) (like battery info from ESP server to iOS)
