@@ -75,6 +75,14 @@ class ContentViewModel: ObservableObject {
         transferManager.transferFile(jpegData)
     }
     
+    func processSelectedPhotoForPreview(_ image: UIImage) -> Data? {
+        return processSelectedPhoto(image)
+    }
+    
+    func sendProcessedImageData(_ imageData: Data) {
+        transferManager.transferFile(imageData)
+    }
+    
     private func processSelectedPhoto(_ image: UIImage) -> Data? {
         #if canImport(UIKit)
         // Use device screen dimensions if available, otherwise use default
@@ -335,15 +343,11 @@ struct ContentView: View {
                 Image(systemName: "wifi.router")
                     .imageScale(.large)
                     .foregroundStyle(.tint)
-                    .font(.system(size: 12))
+                    .font(.system(size: 48))
                 
-                Text("Bluetooth File Sender")
+                Text("TinyFlow Image Upload")
                     .font(.title)
                     .fontWeight(.bold)
-                
-                Text("iOS")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
                 
                 Divider()
                 
@@ -455,7 +459,7 @@ struct ContentView: View {
                         }
                         .buttonStyle(.bordered)
                         .controlSize(.small)
-                    }
+                    }.hidden()
                 }
                 
                 if viewModel.isScanning {
@@ -637,6 +641,17 @@ struct PhotoPickerView: View {
     let viewModel: ContentViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var selectedItem: PhotosPickerItem?
+    @State private var processedImageData: Data?
+    @State private var processedImage: UIImage?
+    @State private var isProcessing = false
+    @State private var imageMetadata: ImageMetadata?
+    
+    struct ImageMetadata {
+        let originalSize: CGSize
+        let processedSize: CGSize
+        let fileSize: Int
+        let compressionQuality: String
+    }
     
     var body: some View {
         NavigationView {
@@ -659,23 +674,85 @@ struct PhotoPickerView: View {
                         if let data = try? await newItem?.loadTransferable(type: Data.self),
                            let image = UIImage(data: data) {
                             selectedPhoto = image
-                            viewModel.sendSelectedPhoto(image)
-                            dismiss()
+                            await processImage(image)
                         }
                     }
                 }
                 
-                if let selectedPhoto = selectedPhoto {
-                    VStack {
-                        Text("Selected Photo Preview")
+                if isProcessing {
+                    VStack(spacing: 12) {
+                        ProgressView()
+                        Text("Processing image...")
                             .font(.caption)
                             .foregroundColor(.secondary)
+                    }
+                    .padding()
+                }
+                
+                if let processedImage = processedImage,
+                   let metadata = imageMetadata,
+                   let processedData = processedImageData {
+                    
+                    VStack(spacing: 16) {
+                        Text("Processed Image Preview")
+                            .font(.headline)
+                            .foregroundColor(.primary)
                         
-                        Image(uiImage: selectedPhoto)
+                        // Processed image thumbnail
+                        Image(uiImage: processedImage)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(maxHeight: 200)
                             .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                        
+                        // Image metadata
+                        VStack(spacing: 8) {
+                            HStack {
+                                Text("Dimensions:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("\(Int(metadata.processedSize.width)) × \(Int(metadata.processedSize.height))")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                            
+                            HStack {
+                                Text("File Size:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text(formatFileSize(metadata.fileSize))
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                            
+                            HStack {
+                                Text("Format:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("Grayscale JPEG")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                        }
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        
+                        // Send button
+                        Button("Send to Device") {
+                            viewModel.sendProcessedImageData(processedData)
+                            dismiss()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .disabled(viewModel.connectedDevice == nil || viewModel.showTransferComplete || (viewModel.transferStatus.contains("Transfer") && !viewModel.transferStatus.contains("failed")))
                     }
                 }
                 
@@ -692,6 +769,37 @@ struct PhotoPickerView: View {
                 }
             }
         }
+    }
+    
+    private func processImage(_ image: UIImage) async {
+        isProcessing = true
+        
+        // Use the existing image processing logic
+        let originalSize = image.size
+        
+        await MainActor.run {
+            if let processedData = viewModel.processSelectedPhotoForPreview(image) {
+                // Create UIImage from processed data to display
+                if let processed = UIImage(data: processedData) {
+                    self.processedImage = processed
+                    self.processedImageData = processedData
+                    self.imageMetadata = ImageMetadata(
+                        originalSize: originalSize,
+                        processedSize: processed.size,
+                        fileSize: processedData.count,
+                        compressionQuality: "Optimized"
+                    )
+                }
+            }
+            self.isProcessing = false
+        }
+    }
+    
+    private func formatFileSize(_ bytes: Int) -> String {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useKB, .useMB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: Int64(bytes))
     }
 }
 
