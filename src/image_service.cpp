@@ -92,8 +92,9 @@ void ImageService::release_image_buffer() {
 }
 
 void ImageService::reset_transfer() {
-    // Release image buffer (safe to call multiple times)
-    release_image_buffer();
+    // release_image_buffer();
+    // DO NOT release image_buffer here, as it may be used by the callback
+    // MUST BE freed by the user after processing the image data
     
     if (chunk_received_map_) {
         free(chunk_received_map_);
