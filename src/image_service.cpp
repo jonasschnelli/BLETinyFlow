@@ -39,7 +39,8 @@ ImageService::ImageService()
       chunk_received_map_(nullptr),
       current_request_start_(0), current_request_end_(0), chunks_per_request_(DEFAULT_CHUNKS_PER_REQUEST),
       total_chunks_received_(0), current_batch_received_(0),
-      image_callback_(nullptr) {
+      image_callback_(nullptr),
+      device_type_(0), battery_level_(0), width_(0), height_(0) {
 }
 
 ImageService::~ImageService() {
@@ -326,9 +327,20 @@ void ImageService::handle_write_event(esp_gatt_if_t gatts_if, esp_ble_gatts_cb_p
         ESP_LOGI(TAG, "Control notification descriptor write");
         if (param->write.len == 2) {
             uint16_t notify_value = param->write.value[0] | (param->write.value[1] << 8);
+            bool was_enabled = control_notifications_enabled_;
             control_notifications_enabled_ = (notify_value & 0x0001) != 0;
             ESP_LOGI(TAG, "Control notifications %s", 
                      control_notifications_enabled_ ? "enabled" : "disabled");
+            
+            // Send device info automatically when notifications are first enabled
+            if (control_notifications_enabled_ && !was_enabled) {
+                ESP_LOGI(TAG, "Control notifications just enabled - sending device info");
+                if (send_device_info()) {
+                    ESP_LOGI(TAG, "✅ Device info sent successfully after notification enablement");
+                } else {
+                    ESP_LOGE(TAG, "❌ Failed to send device info after notification enablement");
+                }
+            }
         } else {
             ESP_LOGW(TAG, "Invalid descriptor write length: %d", param->write.len);
         }
@@ -369,6 +381,7 @@ void ImageService::handle_connect_event(esp_ble_gatts_cb_param_t *param) {
     
     conn_id_ = param->connect.conn_id;
     ESP_LOGI(TAG, "Connection ID assigned: %d", conn_id_);
+    ESP_LOGI(TAG, "Device info will be sent automatically after client enables notifications");
     esp_ble_gap_update_conn_params(&conn_params);
 }
 
@@ -786,6 +799,41 @@ bool ImageService::send_transfer_complete_ack(uint32_t received_size) {
     msg.param3 = 0;
     
     return send_control_notification(msg);
+}
+
+bool ImageService::send_device_info() {
+    ESP_LOGI(TAG, "=== SENDING DEVICE_INFO ===");
+    ESP_LOGI(TAG, "Device type: %d, Battery: %d%%, Display: %dx%d", 
+             device_type_, battery_level_, width_, height_);
+    
+    ControlMessage msg = {};
+    msg.command = static_cast<uint8_t>(CommandType::DEVICE_INFO);
+    msg.sequence_number = ++sequence_number_;
+    
+    // Pack device info into parameters according to specification
+    // Parameter 1: uint8_t device_type, uint8_t battery_level, uint16_t reserved
+    msg.param1 = static_cast<uint32_t>(device_type_) | 
+                 (static_cast<uint32_t>(battery_level_) << 8) | 
+                 (static_cast<uint32_t>(0) << 16);  // reserved
+    
+    // Parameter 2: uint16_t width, uint16_t height
+    msg.param2 = static_cast<uint32_t>(width_) | 
+                 (static_cast<uint32_t>(height_) << 16);
+    
+    // Parameter 3: Reserved
+    msg.param3 = 0;
+    
+    ESP_LOGI(TAG, "DEVICE_INFO message: cmd=0x%02X, seq=%d, p1=0x%08lX, p2=0x%08lX, p3=0x%08lX",
+             msg.command, msg.sequence_number, msg.param1, msg.param2, msg.param3);
+    
+    bool success = send_control_notification(msg);
+    if (success) {
+        ESP_LOGI(TAG, "✅ DEVICE_INFO sent successfully");
+    } else {
+        ESP_LOGE(TAG, "❌ DEVICE_INFO send failed");
+    }
+    
+    return success;
 }
 
 bool ImageService::send_transfer_error(ErrorCode error_code) {

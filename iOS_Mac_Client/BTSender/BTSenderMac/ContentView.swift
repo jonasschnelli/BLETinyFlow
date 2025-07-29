@@ -15,9 +15,17 @@ class ContentViewModel: ObservableObject {
     @Published var discoveredDevices: [DiscoveredDevice] = []
     @Published var isScanning = false
     @Published var showDeviceList = false
+    @Published var targetDevices: [DiscoveredDevice] = []
+    @Published var connectedDevice: DiscoveredDevice?
+    @Published var connectionStatus = "Scanning for devices..."
+    @Published var showTransferComplete = false
     
     init() {
         transferManager.delegate = self
+        // Request immediate refresh of target devices in case scan already started
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.transferManager.refreshTargetDevicesUI()
+        }
     }
     
     func sendJPEGFile() {
@@ -33,9 +41,28 @@ class ContentViewModel: ObservableObject {
         transferManager.startGeneralScan()
     }
     
+    func connectToDevice(_ device: DiscoveredDevice) {
+        transferManager.connectToDevice(device)
+    }
+    
+    func disconnectFromDevice() {
+        transferManager.disconnectFromDevice()
+    }
+    
     func checkBluetoothStatus() {
         let status = transferManager.checkBluetoothStatus()
         transferStatus = "Bluetooth status: \(status)"
+    }
+    
+    func debugManagerState() {
+        transferManager.debugCurrentState()
+        transferManager.refreshTargetDevicesUI()
+    }
+    
+    func resetTransferState() {
+        transferStatus = "Ready to transfer"
+        progress = 0.0
+        showTransferComplete = false
     }
     
     private func createSampleJPEGData() -> Data? {
@@ -113,6 +140,7 @@ extension ContentViewModel: BLETinyFlowManagerDelegate {
         DispatchQueue.main.async {
             self.transferStatus = String(format: "Transfer completed!\n%d bytes in %.1fs (%.1f KB/s)", fileSize, duration, throughput)
             self.progress = 1.0
+            self.showTransferComplete = true
         }
     }
     
@@ -146,6 +174,49 @@ extension ContentViewModel: BLETinyFlowManagerDelegate {
             self.isScanning = isScanning
         }
     }
+    
+    func targetDevicesDiscovered(_ devices: [DiscoveredDevice]) {
+        NSLog("[BTTransfer] UI: Target devices discovered: \(devices.count)")
+        for device in devices {
+            NSLog("[BTTransfer] UI: - Device: \(device.displayName) (\(device.identifier))")
+        }
+        DispatchQueue.main.async {
+            self.targetDevices = devices
+            NSLog("[BTTransfer] UI: Updated target devices array to \(devices.count) items")
+            if devices.isEmpty {
+                self.connectionStatus = "No target devices found"
+            } else {
+                self.connectionStatus = "Found \(devices.count) device(s)"
+            }
+        }
+    }
+    
+    func deviceDidConnect(_ device: DiscoveredDevice) {
+        NSLog("[BTTransfer] UI: Device connected: \(device.displayName)")
+        DispatchQueue.main.async {
+            self.connectedDevice = device
+            self.connectionStatus = "Connected to \(device.displayName)"
+        }
+    }
+    
+    func deviceDidDisconnect(_ device: DiscoveredDevice?, error: Error?) {
+        NSLog("[BTTransfer] UI: Device disconnected")
+        DispatchQueue.main.async {
+            self.connectedDevice = nil
+            if let error = error {
+                self.connectionStatus = "Disconnected: \(error.localizedDescription)"
+            } else {
+                self.connectionStatus = "Disconnected"
+            }
+        }
+    }
+    
+    func deviceConnectionDidFail(_ device: DiscoveredDevice, error: Error) {
+        NSLog("[BTTransfer] UI: Connection failed: \(error.localizedDescription)")
+        DispatchQueue.main.async {
+            self.connectionStatus = "Connection failed: \(error.localizedDescription)"
+        }
+    }
 }
 
 struct ContentView: View {
@@ -168,19 +239,75 @@ struct ContentView: View {
             
             Divider()
             
+            // Connection Status Section
+            VStack(spacing: 8) {
+                Text("Connection Status")
+                    .font(.headline)
+                
+                Text(viewModel.connectionStatus)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                
+                if let connectedDevice = viewModel.connectedDevice {
+                    HStack {
+                        Label(connectedDevice.displayName, systemImage: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundColor(.green)
+                        
+                        Button("Disconnect") {
+                            viewModel.disconnectFromDevice()
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    }
+                }
+            }
+            
+            // Target Devices Section
+            if !viewModel.targetDevices.isEmpty && viewModel.connectedDevice == nil {
+                VStack(spacing: 8) {
+                    Text("Available Devices")
+                        .font(.headline)
+                    
+                    ScrollView {
+                        LazyVStack(spacing: 4) {
+                            ForEach(viewModel.targetDevices, id: \.identifier) { device in
+                                TargetDeviceRowView(
+                                    device: device,
+                                    isConnected: viewModel.connectedDevice?.identifier == device.identifier,
+                                    onConnect: { viewModel.connectToDevice(device) }
+                                )
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 120)
+                }
+            }
+            
+            Divider()
+            
             VStack(spacing: 12) {
                 Text(viewModel.transferStatus)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .frame(minHeight: 40)
                 
-                if viewModel.progress > 0 {
+                if viewModel.progress > 0 && !viewModel.showTransferComplete {
                     ProgressView(value: viewModel.progress)
                         .progressViewStyle(LinearProgressViewStyle())
                         .frame(maxWidth: 300)
                     Text("\(Int(viewModel.progress * 100))%")
                         .font(.caption)
                         .fontWeight(.medium)
+                }
+                
+                if viewModel.showTransferComplete {
+                    Button("OK") {
+                        viewModel.resetTransferState()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                 }
             }
             
@@ -189,11 +316,11 @@ struct ContentView: View {
                     viewModel.sendJPEGFile()
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(viewModel.transferStatus.contains("Transfer") && !viewModel.transferStatus.contains("failed"))
+                .disabled(viewModel.connectedDevice == nil || viewModel.showTransferComplete || (viewModel.transferStatus.contains("Transfer") && !viewModel.transferStatus.contains("failed")))
                 .controlSize(.large)
                 
                 HStack(spacing: 12) {
-                    Button(viewModel.isScanning ? "Scanning..." : "Scan Devices") {
+                    Button(viewModel.isScanning ? "Scanning..." : "Scan All Devices") {
                         viewModel.startDeviceScan()
                     }
                     .buttonStyle(.bordered)
@@ -205,6 +332,12 @@ struct ContentView: View {
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.large)
+                    
+                    Button("Debug") {
+                        viewModel.debugManagerState()
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
                 }
             }
             
@@ -336,6 +469,44 @@ struct DeviceRowView: View {
         if rssi > -50 { return .green }
         else if rssi > -70 { return .orange }
         else { return .red }
+    }
+}
+
+struct TargetDeviceRowView: View {
+    let device: DiscoveredDevice
+    let isConnected: Bool
+    let onConnect: () -> Void
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(device.displayName)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                
+                Text("RSSI: \(device.rssi) dBm")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            if isConnected {
+                Label("Connected", systemImage: "checkmark.circle.fill")
+                    .font(.caption)
+                    .foregroundColor(.green)
+            } else {
+                Button("Connect") {
+                    onConnect()
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
+        }
+        .padding(.vertical, 4)
+        .padding(.horizontal, 8)
+        .background(Color(.controlBackgroundColor))
+        .cornerRadius(8)
     }
 }
 

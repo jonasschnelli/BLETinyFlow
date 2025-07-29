@@ -95,7 +95,8 @@ public:
         // From iOS to ESP32
         TRANSFER_INIT = 0x01,
         
-        // From ESP32 to iOS  
+        // From ESP32 to iOS
+        DEVICE_INFO = 0x02,
         CHUNK_REQUEST = 0x82,
         TRANSFER_COMPLETE_ACK = 0x83,
         TRANSFER_ERROR = 0x84
@@ -168,8 +169,18 @@ public:
     // Buffer management - MUST be called by user after processing image in callback
     void release_image_buffer();
     
+    // Device info management
+    void set_device_type(uint8_t device_type) { device_type_ = device_type; }
+    void set_battery_level(uint8_t battery_level) { battery_level_ = battery_level; }
+    void set_display_size(uint16_t width, uint16_t height) { width_ = width; height_ = height; }
+    uint8_t get_device_type() const { return device_type_; }
+    uint8_t get_battery_level() const { return battery_level_; }
+    uint16_t get_width() const { return width_; }
+    uint16_t get_height() const { return height_; }
+    
     // Notification methods
     bool send_control_notification(const ControlMessage& msg);
+    bool send_device_info();
     bool send_chunk_request(uint16_t start_chunk, uint16_t num_chunks);
     bool send_transfer_complete_ack(uint32_t received_size);
     bool send_transfer_error(ErrorCode error_code);
@@ -226,6 +237,12 @@ private:
     
     // Callback for image transfer completion
     ImageTransferCallback image_callback_;
+    
+    // Device info parameters
+    uint8_t device_type_;
+    uint8_t battery_level_;
+    uint16_t width_;
+    uint16_t height_;
     
     // Event handlers
     void handle_reg_event(esp_ble_gatts_cb_param_t *param);
