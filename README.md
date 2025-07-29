@@ -92,6 +92,12 @@ Initiates a new data transfer session.
 
 #### Server Commands (ESP32 → iOS)
 
+##### DEVICE_INFO (0x02)
+Send device info from server to client.
+- **Parameter 1**: uint8_t device_type, uint8_t battery_level, uint16_t reserved
+- **Parameter 2**: uint16_t width, uint16_t height
+- **Parameter 3**: Reserved (0x00000000)
+
 ##### CHUNK_REQUEST (0x82)
 Requests specific data chunks from the client.
 - **Parameter 1**: Starting chunk ID

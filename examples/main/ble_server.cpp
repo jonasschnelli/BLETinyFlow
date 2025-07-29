@@ -149,6 +149,10 @@ void app_main(void) {
     image_service->set_image_transfer_callback(on_image_transfer_complete);
     ESP_LOGI(TAG, "Image transfer callback registered");
     
+    image_service->set_device_type(1);           // Device type 0-255
+    image_service->set_battery_level(85);        // Battery level 0-255 (85%)
+    image_service->set_display_size(1280, 720);   // Width x Height pixels
+
     ble_server.add_service(std::move(image_service));
     
     // Initialize BLE server

@@ -33,11 +33,33 @@ struct BLETinyFlowProtocol {
 
 enum CommandType: UInt8 {
     case transferInit = 0x01
+    case deviceInfo = 0x02
     case chunkRequest = 0x82
     case transferCompleteAck = 0x83
 }
 
 // MARK: - Message Structures
+
+struct DeviceInfo {
+    let deviceType: UInt8
+    let batteryLevel: UInt8
+    let width: UInt16
+    let height: UInt16
+    
+    init(param1: UInt32, param2: UInt32) {
+        // Extract device info from param1: device_type (8), battery_level (8), reserved (16)
+        self.deviceType = UInt8(param1 & 0xFF)
+        self.batteryLevel = UInt8((param1 >> 8) & 0xFF)
+        
+        // Extract dimensions from param2: width (16), height (16)
+        self.width = UInt16(param2 & 0xFFFF)
+        self.height = UInt16((param2 >> 16) & 0xFFFF)
+    }
+    
+    var description: String {
+        return "DeviceType: \(deviceType), Battery: \(batteryLevel)%, Dimensions: \(width)x\(height)"
+    }
+}
 
 struct ControlMessage {
     let command: CommandType
@@ -126,12 +148,22 @@ enum TransferState: Equatable {
 
 // MARK: - Discovered Device
 
-struct DiscoveredDevice {
+class DiscoveredDevice: ObservableObject {
     let peripheral: CBPeripheral
     let name: String
     let rssi: NSNumber
     let advertisementData: [String: Any]
     let discoveredAt: Date
+    @Published var deviceInfo: DeviceInfo?
+    
+    init(peripheral: CBPeripheral, name: String, rssi: NSNumber, advertisementData: [String: Any], discoveredAt: Date) {
+        self.peripheral = peripheral
+        self.name = name
+        self.rssi = rssi
+        self.advertisementData = advertisementData
+        self.discoveredAt = discoveredAt
+        self.deviceInfo = nil
+    }
     
     var displayName: String {
         return name.isEmpty ? "Unknown Device" : name
@@ -139,6 +171,16 @@ struct DiscoveredDevice {
     
     var identifier: String {
         return peripheral.identifier.uuidString
+    }
+    
+    var displayNameWithInfo: String {
+        guard let info = deviceInfo else { 
+            NSLog("[BTTransfer] Device \(displayName) has no deviceInfo")
+            return displayName 
+        }
+        let infoString = "\(displayName) • \(info.width)x\(info.height) • Type:\(info.deviceType) • \(info.batteryLevel)%"
+        NSLog("[BTTransfer] Device \(displayName) info: \(infoString)")
+        return infoString
     }
 }
 
@@ -152,6 +194,11 @@ protocol BLETinyFlowManagerDelegate: AnyObject {
     func transferProgress(_ progress: Float)
     func devicesDiscovered(_ devices: [DiscoveredDevice])
     func scanningStateChanged(_ isScanning: Bool)
+    func targetDevicesDiscovered(_ devices: [DiscoveredDevice])
+    func deviceDidConnect(_ device: DiscoveredDevice)
+    func deviceDidDisconnect(_ device: DiscoveredDevice?, error: Error?)
+    func deviceConnectionDidFail(_ device: DiscoveredDevice, error: Error)
+    func deviceInfoReceived(_ deviceInfo: DeviceInfo)
 }
 
 // MARK: - Bluetooth Transfer Manager
@@ -184,6 +231,17 @@ class BLETinyFlowManager: NSObject, ObservableObject {
     
     private var discoveredDevices: [String: DiscoveredDevice] = [:]
     private var isGeneralScanning = false
+    private var targetDevices: [String: DiscoveredDevice] = [:]
+    private var isTargetScanning = false
+    private var connectedDevice: DiscoveredDevice?
+    private var connectionState: ConnectionState = .disconnected
+    private var currentDeviceInfo: DeviceInfo?
+    
+    enum ConnectionState {
+        case disconnected
+        case connecting
+        case connected
+    }
     
     override init() {
         NSLog("[BTTransfer] Initializing BluetoothTransferManager")
@@ -191,6 +249,27 @@ class BLETinyFlowManager: NSObject, ObservableObject {
         
         centralManager = CBCentralManager(delegate: self, queue: nil)
         NSLog("[BTTransfer] Central manager created")
+    }
+    
+    // Method to refresh UI with current target devices
+    func refreshTargetDevicesUI() {
+        let devices = Array(targetDevices.values).sorted { $0.rssi.intValue > $1.rssi.intValue }
+        NSLog("[BTTransfer] Refreshing UI with \(devices.count) target devices")
+        for device in devices {
+            NSLog("[BTTransfer] - \(device.displayName) (\(device.identifier))")
+        }
+        delegate?.targetDevicesDiscovered(devices)
+    }
+    
+    func debugCurrentState() {
+        NSLog("[BTTransfer] DEBUG STATE:")
+        NSLog("[BTTransfer] - isTargetScanning: \(isTargetScanning)")
+        NSLog("[BTTransfer] - targetDevices count: \(targetDevices.count)")
+        NSLog("[BTTransfer] - connectionState: \(connectionState)")
+        NSLog("[BTTransfer] - centralManager state: \(centralManager.state.rawValue)")
+        for device in targetDevices.values {
+            NSLog("[BTTransfer] - Target device: \(device.displayName)")
+        }
     }
     
     // MARK: - Public Methods
@@ -215,31 +294,6 @@ class BLETinyFlowManager: NSObject, ObservableObject {
         NSLog("[BTTransfer] Chunk delay set to %d microseconds", microseconds)
     }
     
-    func startScanning() {
-        NSLog("[BTTransfer] Starting scan, central state: \(centralManager.state.rawValue)")
-        guard centralManager.state == .poweredOn else { 
-            NSLog("[BTTransfer] Cannot scan - Bluetooth not powered on")
-            return 
-        }
-        NSLog("[BTTransfer] Scanning for peripherals (no service filter to find ESP_GATTS_DEMO)")
-        centralManager.scanForPeripherals(withServices: [BLETinyFlowProtocol.serviceUUID], options: [
-            CBCentralManagerScanOptionAllowDuplicatesKey: false
-        ])
-        
-        scanTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { [weak self] _ in
-            NSLog("[BTTransfer] Scan timeout - no ESP_GATTS_DEMO device found")
-            self?.stopScanning()
-            self?.delegate?.transferDidFail(error: TransferError.deviceNotFound)
-        }
-    }
-    
-    func stopScanning() {
-        NSLog("[BTTransfer] Stopping scan")
-        centralManager.stopScan()
-        isGeneralScanning = false
-        scanTimer?.invalidate()
-        delegate?.scanningStateChanged(false)
-    }
     
     func startGeneralScan() {
         NSLog("[BTTransfer] Starting general BLE device scan")
@@ -272,9 +326,114 @@ class BLETinyFlowManager: NSObject, ObservableObject {
         delegate?.devicesDiscovered(devices)
     }
     
+    func startTargetDeviceScan() {
+        NSLog("[BTTransfer] Starting target device scan")
+        guard centralManager.state == .poweredOn else {
+            NSLog("[BTTransfer] Cannot scan - Bluetooth not powered on")
+            // Retry after delay if Bluetooth is not ready yet
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                self?.startTargetDeviceScan()
+            }
+            return
+        }
+        
+        // Don't clear existing devices on restart
+        isTargetScanning = true
+        
+        NSLog("[BTTransfer] Scanning for target service UUID devices")
+        centralManager.scanForPeripherals(withServices: [BLETinyFlowProtocol.serviceUUID], options: [
+            CBCentralManagerScanOptionAllowDuplicatesKey: false
+        ])
+        
+//        // Scan continuously without frequent restarts
+//        scanTimer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { [weak self] _ in
+//            self?.refreshTargetDeviceScan()
+//        }
+    }
+    
+    private func refreshTargetDeviceScan() {
+        NSLog("[BTTransfer] Refreshing target device scan - keeping \(targetDevices.count) existing devices")
+        if isTargetScanning && centralManager.state == .poweredOn {
+            // Don't stop/restart scan, just ensure it's still running
+            // The scan should continue running automatically
+            NSLog("[BTTransfer] Target scan refresh - scan should be continuous")
+        }
+    }
+    
+    func stopTargetDeviceScan() {
+        NSLog("[BTTransfer] Stopping target device scan")
+        if isTargetScanning {
+            centralManager.stopScan()
+            isTargetScanning = false
+            scanTimer?.invalidate()
+        }
+    }
+    
+    func connectToDevice(_ device: DiscoveredDevice) {
+        NSLog("[BTTransfer] Attempting to connect to device: \(device.displayName)")
+        guard connectionState == .disconnected else {
+            NSLog("[BTTransfer] Already connecting or connected")
+            return
+        }
+        
+        connectionState = .connecting
+        peripheral = device.peripheral
+        device.peripheral.delegate = self
+        
+        NSLog("[BTTransfer] Connecting to peripheral")
+        centralManager.connect(device.peripheral, options: nil)
+        
+        // Stop target scanning while connecting
+        stopTargetDeviceScan()
+    }
+    
+    private func handleConnectionTimeout(_ device: DiscoveredDevice) {
+        connectionState = .disconnected
+        delegate?.deviceConnectionDidFail(device, error: TransferError.connectionTimeout)
+        // Resume target scanning
+        startTargetDeviceScan()
+    }
+    
+    func disconnectFromDevice() {
+        NSLog("[BTTransfer] Disconnecting from current device")
+        if let peripheral = peripheral {
+            centralManager.cancelPeripheralConnection(peripheral)
+        }
+        resetConnectionState()
+        // Resume target scanning
+        startTargetDeviceScan()
+    }
+    
+    private func resetConnectionState() {
+        connectionState = .disconnected
+        connectedDevice = nil
+        peripheral = nil
+        controlCharacteristic = nil
+        dataCharacteristic = nil
+        controlNotificationsEnabled = false
+        connectionTimer?.invalidate()
+        transferTimer?.invalidate()
+    }
+    
+    // Public getters for connection state
+    func getConnectedDevice() -> DiscoveredDevice? {
+        return connectedDevice
+    }
+    
+    func isConnected() -> Bool {
+        return connectionState == .connected
+    }
+    
+    func getTargetDevices() -> [DiscoveredDevice] {
+        return Array(targetDevices.values).sorted { $0.rssi.intValue > $1.rssi.intValue }
+    }
+    
+    func getCurrentDeviceInfo() -> DeviceInfo? {
+        return currentDeviceInfo
+    }
+    
     func transferFile(_ fileData: Data) {
         NSLog("[BTTransfer] Transfer requested for \(fileData.count) bytes")
-        NSLog("[BTTransfer] Current Bluetooth state: \(centralManager.state.rawValue)")
         
         guard fileData.count <= BLETinyFlowProtocol.maxFileSize else {
             NSLog("[BTTransfer] File too large: \(fileData.count) bytes (max: \(BLETinyFlowProtocol.maxFileSize))")
@@ -282,22 +441,21 @@ class BLETinyFlowManager: NSObject, ObservableObject {
             return
         }
         
-        guard centralManager.state == .poweredOn else {
-            NSLog("[BTTransfer] Transfer failed - Bluetooth state is \(centralManager.state.rawValue), not powered on")
-            switch centralManager.state {
-            case .unknown:
-                delegate?.transferDidFail(error: TransferError.bluetoothUnavailable)
-            case .resetting:
-                delegate?.transferDidFail(error: TransferError.bluetoothUnavailable)
-            case .unsupported:
-                delegate?.transferDidFail(error: TransferError.bluetoothUnsupported)
-            case .unauthorized:
-                delegate?.transferDidFail(error: TransferError.bluetoothUnauthorized)
-            case .poweredOff:
-                delegate?.transferDidFail(error: TransferError.bluetoothPoweredOff)
-            default:
-                delegate?.transferDidFail(error: TransferError.bluetoothUnavailable)
-            }
+        guard connectionState == .connected else {
+            NSLog("[BTTransfer] Transfer failed - no device connected")
+            delegate?.transferDidFail(error: TransferError.notConnected)
+            return
+        }
+        
+        guard let peripheral = peripheral, peripheral.state == .connected else {
+            NSLog("[BTTransfer] Transfer failed - peripheral not connected")
+            delegate?.transferDidFail(error: TransferError.notConnected)
+            return
+        }
+        
+        guard controlCharacteristic != nil && dataCharacteristic != nil else {
+            NSLog("[BTTransfer] Transfer failed - characteristics not ready")
+            delegate?.transferDidFail(error: TransferError.notConnected)
             return
         }
         
@@ -307,22 +465,8 @@ class BLETinyFlowManager: NSObject, ObservableObject {
         totalChunksSent = 0
         totalBytesWritten = 0
         
-        if peripheral == nil || peripheral?.state != .connected {
-            NSLog("[BTTransfer] No connected peripheral, starting scan")
-            transferState = .connecting
-            delegate?.transferDidStart()
-            startScanning()
-            return
-        }
-        
-        if controlCharacteristic == nil || dataCharacteristic == nil {
-            NSLog("[BTTransfer] Peripheral connected but characteristics not ready, waiting...")
-            transferState = .connecting
-            delegate?.transferDidStart()
-            return
-        }
-        
-        NSLog("[BTTransfer] Peripheral already connected, starting transfer")
+        NSLog("[BTTransfer] Starting transfer to connected device")
+        delegate?.transferDidStart()
         attemptTransfer()
     }
     
@@ -511,6 +655,10 @@ extension BLETinyFlowManager: CBCentralManagerDelegate {
         switch central.state {
         case .poweredOn:
             NSLog("[BTTransfer] Bluetooth LE is ready")
+            if !isTargetScanning {
+                NSLog("[BTTransfer] Auto-starting target device scan")
+                startTargetDeviceScan()
+            }
             break
         case .poweredOff:
             NSLog("[BTTransfer] Bluetooth is turned off")
@@ -538,6 +686,11 @@ extension BLETinyFlowManager: CBCentralManagerDelegate {
             NSLog("[BTTransfer]   AdData: \(key) = \(value)")
         }
         
+        // Log manufacturer data if available
+        if let manufacturerData = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data {
+            NSLog("[BTTransfer]   Manufacturer Data: \(manufacturerData.map { String(format: "%02x", $0) }.joined(separator: " "))")
+        }
+        
         if isGeneralScanning {
             let device = DiscoveredDevice(
                 peripheral: peripheral,
@@ -547,43 +700,69 @@ extension BLETinyFlowManager: CBCentralManagerDelegate {
                 discoveredAt: Date()
             )
             discoveredDevices[peripheral.identifier.uuidString] = device
-            NSLog("[BTTransfer] Added device to discovery list: '\(device.displayName)'")
+            NSLog("[BTTransfer] Added device to general discovery list: '\(device.displayName)'")
+        } else if isTargetScanning {
+            let device = DiscoveredDevice(
+                peripheral: peripheral,
+                name: deviceName,
+                rssi: RSSI,
+                advertisementData: advertisementData,
+                discoveredAt: Date()
+            )
+            targetDevices[peripheral.identifier.uuidString] = device
+            NSLog("[BTTransfer] Added target device: '\(device.displayName)' (total: \(targetDevices.count))")
+            
+            // Notify delegate of updated target devices
+            let devices = Array(targetDevices.values).sorted { $0.rssi.intValue > $1.rssi.intValue }
+            NSLog("[BTTransfer] Notifying delegate of \(devices.count) target devices")
+            delegate?.targetDevicesDiscovered(devices)
         } else {
-            if deviceName.contains(BLETinyFlowProtocol.deviceName) || deviceName.contains("ESP") {
-                NSLog("[BTTransfer] Found target ESP32 device for file transfer: '\(deviceName)'")
-                self.peripheral = peripheral
-                peripheral.delegate = self
-                NSLog("[BTTransfer] Connecting to peripheral")
-                central.connect(peripheral, options: nil)
-                central.stopScan()
-                scanTimer?.invalidate()
-            }
+            NSLog("[BTTransfer] Device discovered but not scanning: general=\(isGeneralScanning), target=\(isTargetScanning)")
         }
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         NSLog("[BTTransfer] Connected to peripheral: \(peripheral.name ?? "Unknown")")
+        connectionState = .connected
+        
+        // Find the connected device in our target devices
+        if let device = targetDevices.values.first(where: { $0.peripheral.identifier == peripheral.identifier }) {
+            connectedDevice = device
+            delegate?.deviceDidConnect(device)
+        }
+        
         NSLog("[BTTransfer] Discovering services")
         peripheral.discoverServices([BLETinyFlowProtocol.serviceUUID])
         
         connectionTimer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { [weak self] _ in
-            NSLog("[BTTransfer] Connection timeout")
-            self?.delegate?.transferDidFail(error: TransferError.connectionTimeout)
+            NSLog("[BTTransfer] Service discovery timeout")
+            if let device = self?.connectedDevice {
+                self?.delegate?.deviceConnectionDidFail(device, error: TransferError.connectionTimeout)
+            }
         }
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         NSLog("[BTTransfer] Failed to connect to peripheral: \(error?.localizedDescription ?? "Unknown error")")
-        delegate?.transferDidFail(error: error ?? TransferError.connectionFailed)
+        
+        if let device = targetDevices.values.first(where: { $0.peripheral.identifier == peripheral.identifier }) {
+            delegate?.deviceConnectionDidFail(device, error: error ?? TransferError.connectionFailed)
+        }
+        
+        resetConnectionState()
+        // Resume target scanning
+        startTargetDeviceScan()
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         NSLog("[BTTransfer] Disconnected from peripheral: \(error?.localizedDescription ?? "No error")")
         
-        self.peripheral = nil
-        controlCharacteristic = nil
-        dataCharacteristic = nil
-        controlNotificationsEnabled = false
+        let disconnectedDevice = connectedDevice
+        delegate?.deviceDidDisconnect(disconnectedDevice, error: error)
+        
+        resetConnectionState()
+        // Resume target scanning
+        startTargetDeviceScan()
     }
 }
 
@@ -779,6 +958,21 @@ extension BLETinyFlowManager: CBPeripheralDelegate {
         
         NSLog("[BTTransfer] Control command: \(message.command.rawValue)")
         switch message.command {
+        case .deviceInfo:
+            let deviceInfo = DeviceInfo(param1: message.param1, param2: message.param2)
+            NSLog("[BTTransfer] Received DEVICE_INFO: \(deviceInfo.description)")
+            currentDeviceInfo = deviceInfo
+            
+            // Update connected device with device info
+            if let device = connectedDevice {
+                NSLog("[BTTransfer] Updating connected device \(device.displayName) with device info")
+                device.deviceInfo = deviceInfo
+                NSLog("[BTTransfer] Device info set, calling delegate")
+                delegate?.deviceInfoReceived(deviceInfo)
+            } else {
+                NSLog("[BTTransfer] No connected device to update with device info")
+            }
+            
         case .chunkRequest:
             NSLog("[BTTransfer] Received CHUNK_REQUEST: start=%d, numChunks=%d", message.param1, message.param2)
             if transferState == .waitingForChunkRequest || transferState == .sendingData {

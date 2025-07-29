@@ -4,14 +4,6 @@
 <dict>
     <key>NSPrivacyAccessedAPITypes</key>
     <array>
-        <dict>
-            <key>NSPrivacyAccessedAPIType</key>
-            <string>NSPrivacyAccessedAPICategoryBluetoothAlways</string>
-            <key>NSPrivacyAccessedAPITypeReasons</key>
-            <array>
-                <string>CA92.1</string>
-            </array>
-        </dict>
     </array>
     <key>NSPrivacyCollectedDataTypes</key>
     <array/>
@@ -19,5 +11,7 @@
     <array/>
     <key>NSPrivacyTracking</key>
     <false/>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to your photo library to select and send photos via Bluetooth.</string>
 </dict>
 </plist>
