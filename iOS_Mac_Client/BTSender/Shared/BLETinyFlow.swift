@@ -1,9 +1,7 @@
-//
-//  BTProtocol.swift
-//  BTSender/BTSenderMac
-//
-//  Created by Jonas Schnelli on 7/26/25.
-//
+// Copyright (c) 2025 Jonas Schnelli
+// Distributed under the MIT software license, see the accompanying
+// file license.txt or http://www.opensource.org/licenses/mit-license.php.
+// created with the help of Claude AI
 
 import Foundation
 import CoreBluetooth
