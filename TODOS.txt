@@ -1,7 +1,8 @@
 - Add multi-connection option or at least block further device connections if connection is busy
-- Implement a CRC32 checksum for the whole file
-- Optimize logging (move some logs to debug level). Right now, it decreases performance
-- Add a test strategy, add unit tests against fixed data (to test error cases, etc.)
-- Maybe remove emojis in log messages (still undecided)
+- Implement a CRC32 checksum for the entire file
+- Optimize logging (move some logs to debug level). Currently, it decreases performance
+- Add a test strategy and unit tests against fixed data (to test error cases, etc.)
+- Maybe remove emojis from log messages (still undecided)
 - Add message for transfer abort
-- Add custom info message (key/value) (like battery info from ESP server to iOS)
+- Add custom info message (key/value) functionality (like battery info from ESP server to iOS)
+- iOS app: allow choosing which device to send to

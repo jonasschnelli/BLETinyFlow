@@ -222,7 +222,7 @@ class BLETinyFlowManager: NSObject, ObservableObject {
             return 
         }
         NSLog("[BTTransfer] Scanning for peripherals (no service filter to find ESP_GATTS_DEMO)")
-        centralManager.scanForPeripherals(withServices: nil, options: [
+        centralManager.scanForPeripherals(withServices: [BLETinyFlowProtocol.serviceUUID], options: [
             CBCentralManagerScanOptionAllowDuplicatesKey: false
         ])
         
