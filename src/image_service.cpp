@@ -436,10 +436,26 @@ void ImageService::handle_control_message(esp_gatt_if_t gatts_if, const uint8_t*
         case static_cast<uint8_t>(CommandType::TRANSFER_INIT):
             handle_transfer_init(*msg);
             break;
+        case static_cast<uint8_t>(CommandType::DEVICE_INFO):
+            handle_device_info_request(*msg);
+            break;
         default:
             ESP_LOGW(TAG, "Unknown control command: 0x%02X", msg->command);
             send_transfer_error(ErrorCode::INVALID_COMMAND);
             break;
+    }
+}
+
+void ImageService::handle_device_info_request(const ControlMessage& msg) {
+    ESP_LOGI(TAG, "DEVICE_INFO received from client (ignoring param1=%lu, param2=%lu, param3=%lu)", 
+             msg.param1, msg.param2, msg.param3);
+    
+    // Send our device info in response to client's device info
+    ESP_LOGI(TAG, "Responding with server device info");
+    if (send_device_info()) {
+        ESP_LOGI(TAG, "✅ Device info response sent successfully");
+    } else {
+        ESP_LOGE(TAG, "❌ Failed to send device info response");
     }
 }
 

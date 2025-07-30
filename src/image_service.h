@@ -258,6 +258,7 @@ private:
     void handle_control_message(esp_gatt_if_t gatts_if, const uint8_t* data, uint16_t len);
     void handle_data_chunk(const uint8_t* data, uint16_t len);
     void handle_transfer_init(const ControlMessage& msg);
+    void handle_device_info_request(const ControlMessage& msg);
     
     // Helper methods
     bool validate_jpeg_header() const;
